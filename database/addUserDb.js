@@ -10,7 +10,7 @@ function addUser(connection, id, data) {
       if (err) {
         reject(err);
       } else {
-        resolve();
+        resolve(user.id);
       }
     });
   });
