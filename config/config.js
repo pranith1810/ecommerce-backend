@@ -9,4 +9,5 @@ module.exports = {
   database: process.env.DB_NAME,
   port: process.env.PORT || '8000',
   secret: process.env.SECRET_KEY,
+  sendgridApiKey: process.env.SENDGRID_API_KEY,
 };

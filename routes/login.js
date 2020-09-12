@@ -15,9 +15,13 @@ router.post('/',
       checkUserDb.checkUser(connection, req.body)
         .then((data) => {
           if (data.length > 0) {
-            res.json({
-              msg: 'Login successful!',
-            });
+            if (data[0].active) {
+              res.json({
+                msg: 'Login successful!',
+              });
+            } else {
+              res.status(409).json({ msg: 'Please confirm your mail!' });
+            }
           } else {
             res.status(404).json({ msg: 'User does not exist!' });
           }
