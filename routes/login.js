@@ -1,7 +1,9 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { connection } = require('../database/dbConnect.js');
 const checkUserDb = require('../database/checkUserDb');
+const config = require('../config/config.js');
 
 const router = express.Router();
 
@@ -16,8 +18,14 @@ router.post('/',
         .then((data) => {
           if (data.length > 0) {
             if (data[0].active) {
-              res.json({
-                msg: 'Login successful!',
+              jwt.sign(data[0].id, config.secret, (err, token) => {
+                if (err) {
+                  res.status(500).send('Internal server error!');
+                } else {
+                  res.json({
+                    token,
+                  });
+                }
               });
             } else {
               res.status(409).json({ msg: 'Please confirm your mail!' });
