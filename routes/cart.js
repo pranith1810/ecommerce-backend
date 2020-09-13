@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { connection } = require('../database/dbConnect.js');
 const addProductCartDb = require('../database/addProductCartDb.js');
+const getAllProductCartDb = require('../database/getAllProductCartDb.js');
 const config = require('../config/config.js');
 
 const router = express.Router();
@@ -21,6 +22,22 @@ router.post('/add', (req, res, next) => {
           } else {
             next(error);
           }
+        });
+    }
+  });
+});
+
+router.get('/all/:token', (req, res, next) => {
+  jwt.verify(req.params.token, config.secret, (err, id) => {
+    if (err) {
+      res.status(403).send('Verification failed!!');
+    } else {
+      getAllProductCartDb.getAllProductCart(connection, id)
+        .then((dbResponse) => {
+          res.send(dbResponse);
+        })
+        .catch((error) => {
+          next(error);
         });
     }
   });
