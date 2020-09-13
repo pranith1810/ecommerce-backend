@@ -4,6 +4,7 @@ const config = require('./config/config.js');
 const signup = require('./routes/signup.js');
 const login = require('./routes/login.js');
 const product = require('./routes/product.js');
+const cart = require('./routes/cart.js');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use('/signup', signup);
 app.use('/login', login);
 app.use('/product', product);
+app.use('/cart', cart);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found!');

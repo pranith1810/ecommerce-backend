@@ -58,14 +58,19 @@ router.post('/',
   postAndVerify);
 
 router.get('/confirmation/:token', (req, res) => {
-  const id = jwt.verify(req.params.token, config.secret);
-  confirmUser(connection, id)
-    .then(() => {
-      res.send('Thank you for confirming!');
-    })
-    .catch(() => {
-      res.status(500).send('Internal server error');
-    });
+  jwt.verify(req.params.token, config.secret, (err, id) => {
+    if (err) {
+      res.send('Verification failed!!');
+    } else {
+      confirmUser(connection, id)
+        .then(() => {
+          res.send('Thank you for confirming!');
+        })
+        .catch(() => {
+          res.status(500).send('Internal server error');
+        });
+    }
+  });
 });
 
 module.exports = router;
