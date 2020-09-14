@@ -44,6 +44,20 @@ function getAccessories(connection) {
   });
 }
 
+function getAllProducts(connection) {
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * from products';
+
+    connection.query(query, (err, dbResponse) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(dbResponse);
+      }
+    });
+  });
+}
+
 function getProduct(connection, id) {
   return new Promise((resolve, reject) => {
     const query = `SELECT * from products
@@ -64,4 +78,5 @@ module.exports = {
   getClothing,
   getAccessories,
   getProduct,
+  getAllProducts,
 };

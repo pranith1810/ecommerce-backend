@@ -34,6 +34,16 @@ router.get('/accessories', (req, res, next) => {
     });
 });
 
+router.get('/all', (req, res, next) => {
+  getProductsDb.getAllProducts(connection)
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
 router.get('/:id', (req, res, next) => {
   getProductsDb.getProduct(connection, req.params.id)
     .then((data) => {

@@ -24,6 +24,7 @@ router.post('/',
                 } else {
                   res.json({
                     token,
+                    isAdmin: data[0].is_admin,
                   });
                 }
               });

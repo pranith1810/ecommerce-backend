@@ -1,7 +1,7 @@
 /* eslint-disable dot-notation */
 function checkUser(connection, data) {
   return new Promise((resolve, reject) => {
-    const query = `SELECT id,name,active from users 
+    const query = `SELECT id,name,active,is_admin from users 
                   where email='${data.email}' and password='${data.password}'`;
 
     connection.query(query, (err, dbResponse) => {
