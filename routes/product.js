@@ -118,4 +118,26 @@ router.post('/delete', (req, res, next) => {
   });
 });
 
+router.post('/update', (req, res, next) => {
+  jwt.verify(req.body.token, config.secret, (err) => {
+    if (err) {
+      res.status(403).send('Verification failed!!');
+    } else {
+      addProductDb.deleteProduct(connection, req.body.productId)
+        .then(() => {
+          addProductDb.addProduct(connection, req.body.productId, req.body)
+            .then(() => {
+              res.send('Product added successfully!');
+            })
+            .catch((error) => {
+              next(error);
+            });
+        })
+        .catch((error) => {
+          next(error);
+        });
+    }
+  });
+});
+
 module.exports = router;
