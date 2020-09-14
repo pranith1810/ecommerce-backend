@@ -43,4 +43,52 @@ router.get('/all/:token', (req, res, next) => {
   });
 });
 
+router.post('/update/add', (req, res, next) => {
+  jwt.verify(req.body.token, config.secret, (err, id) => {
+    if (err) {
+      res.status(403).send('Verification failed!!');
+    } else {
+      addProductCartDb.updateProductCartAdd(connection, id, req.body.productId)
+        .then(() => {
+          res.send('Product quantity increased successfully!');
+        })
+        .catch((error) => {
+          next(error);
+        });
+    }
+  });
+});
+
+router.post('/update/minus', (req, res, next) => {
+  jwt.verify(req.body.token, config.secret, (err, id) => {
+    if (err) {
+      res.status(403).send('Verification failed!!');
+    } else {
+      addProductCartDb.updateProductCartMinus(connection, id, req.body.productId)
+        .then(() => {
+          res.send('Product quantity increased successfully!');
+        })
+        .catch((error) => {
+          next(error);
+        });
+    }
+  });
+});
+
+router.post('/delete', (req, res, next) => {
+  jwt.verify(req.body.token, config.secret, (err, id) => {
+    if (err) {
+      res.status(403).send('Verification failed!!');
+    } else {
+      addProductCartDb.deleteProductCart(connection, id, req.body.productId)
+        .then(() => {
+          res.send('Product deleted from cart successfully!');
+        })
+        .catch((error) => {
+          next(error);
+        });
+    }
+  });
+});
+
 module.exports = router;
