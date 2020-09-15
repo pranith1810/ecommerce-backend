@@ -5,6 +5,11 @@ const signup = require('./routes/signup.js');
 const login = require('./routes/login.js');
 const product = require('./routes/product.js');
 const cart = require('./routes/cart.js');
+const initializeDatabase = require('./database/initializeDatabase');
+
+initializeDatabase.createUserTable();
+initializeDatabase.createProductsTable();
+initializeDatabase.createUserCartTable();
 
 const app = express();
 
