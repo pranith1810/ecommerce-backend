@@ -1,0 +1,98 @@
+[
+  {
+    "id": "33688c6a-1784-40e6-b133-a9a29458c101",
+    "name": "Glasses",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "accessories",
+    "imgPath": "glasses.png"
+  },
+  {
+    "id": "352650e4-81be-479c-8654-c4e04650f693",
+    "name": "Watch",
+    "top_product": 1,
+    "price_rupees": 200,
+    "type": "accessories",
+    "imgPath": "watch.jpg"
+  },
+  {
+    "id": "4d78e137-4028-4d7f-ba9d-1ee8f434938c",
+    "name": "Glasses",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "accessories",
+    "imgPath": "glasses.png"
+  },
+  {
+    "id": "6037d7a8-b53f-4476-ba91-82c30b9e6c36",
+    "name": "Glasses",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "accessories",
+    "imgPath": "glasses.png"
+  },
+  {
+    "id": "6392bdba-652f-4387-b8bb-842d5f643469",
+    "name": "Pant",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "clothing",
+    "imgPath": "jeans.png"
+  },
+  {
+    "id": "6afa5689-33f7-46c2-a62f-4a406b9dfa6f",
+    "name": "Glasses",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "accessories",
+    "imgPath": "glasses.png"
+  },
+  {
+    "id": "9d93344b-b61f-40c0-b80e-7861127fb0c8",
+    "name": "Jeans",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "clothing",
+    "imgPath": "jeans.png"
+  },
+  {
+    "id": "9e22bdf2-2b8a-4467-bbf7-028b585f43de",
+    "name": "glasses",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "accessories",
+    "imgPath": "glasses.png"
+  },
+  {
+    "id": "a72fe798-a946-4dbf-b41f-79fb658491ee",
+    "name": "T-shirt",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "clothing",
+    "imgPath": "tshirt.jpeg"
+  },
+  {
+    "id": "cc714fa0-69ed-4983-bd9c-d3f2866f32de",
+    "name": "Shirt",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "clothing",
+    "imgPath": "shirt.png"
+  },
+  {
+    "id": "ef3dbe9b-d11d-4302-ac21-b58674caa0ab",
+    "name": "T-shirt",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "clothing",
+    "imgPath": "tshirt.jpeg"
+  },
+  {
+    "id": "fe232c12-60f8-4b96-a416-360b154df328",
+    "name": "Glasses",
+    "top_product": 1,
+    "price_rupees": 100,
+    "type": "accessories",
+    "imgPath": "glasses.png"
+  }
+]

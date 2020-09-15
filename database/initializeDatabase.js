@@ -1,4 +1,5 @@
 const { connection } = require('./dbConnect.js');
+const initialData = require('../data/initialData.json');
 
 function createUserTable() {
   const query = `create table if not exists users(
@@ -21,7 +22,7 @@ function createProductsTable() {
   const query = `create table if not exists products(
     id varchar(36) not null primary key,
       name text,
-      top_product bool,
+      top_product int,
       price_rupees int,
       type text,
       imgPath text
@@ -30,6 +31,16 @@ function createProductsTable() {
   connection.query(query, (err) => {
     if (err) {
       throw err;
+    } else {
+      initialData.forEach((object) => {
+        connection.query(
+          'insert ignore into products set ?', object, (error) => {
+            if (error) {
+              throw err;
+            }
+          },
+        );
+      });
     }
   });
 }
@@ -48,8 +59,6 @@ function createUserCartTable() {
     }
   });
 }
-
-createUserTable();
 
 module.exports = {
   createUserTable,
