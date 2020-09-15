@@ -43,7 +43,7 @@ router.get('/all/:token', (req, res, next) => {
   });
 });
 
-router.post('/update/add', (req, res, next) => {
+router.put('/update/add', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err, id) => {
     if (err) {
       res.status(403).send('Verification failed!!');
@@ -59,7 +59,7 @@ router.post('/update/add', (req, res, next) => {
   });
 });
 
-router.post('/update/minus', (req, res, next) => {
+router.put('/update/minus', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err, id) => {
     if (err) {
       res.status(403).send('Verification failed!!');
@@ -75,7 +75,7 @@ router.post('/update/minus', (req, res, next) => {
   });
 });
 
-router.post('/delete', (req, res, next) => {
+router.delete('/delete', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err, id) => {
     if (err) {
       res.status(403).send('Verification failed!!');

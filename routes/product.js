@@ -102,7 +102,7 @@ router.post('/add',
   }),
   addProduct);
 
-router.post('/delete', (req, res, next) => {
+router.delete('/delete', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
       res.status(403).send('Verification failed!!');
@@ -118,7 +118,7 @@ router.post('/delete', (req, res, next) => {
   });
 });
 
-router.post('/update', (req, res, next) => {
+router.put('/update', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
       res.status(403).send('Verification failed!!');
