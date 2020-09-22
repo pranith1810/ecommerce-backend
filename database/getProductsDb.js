@@ -61,9 +61,9 @@ function getAllProducts(connection) {
 function getProduct(connection, id) {
   return new Promise((resolve, reject) => {
     const query = `SELECT * from products
-                  where id='${id}'`;
+                  where id=?`;
 
-    connection.query(query, (err, dbResponse) => {
+    connection.query(query, [id], (err, dbResponse) => {
       if (err) {
         reject(err);
       } else {

@@ -25,9 +25,9 @@ function addProduct(connection, productId, data) {
 function deleteProduct(connection, productId) {
   return new Promise((resolve, reject) => {
     const query = `DELETE FROM products
-                  where id = '${productId}'`;
+                  where id =?`;
 
-    connection.query(query, (err) => {
+    connection.query(query, [productId], (err) => {
       if (err) {
         reject(err);
       } else {

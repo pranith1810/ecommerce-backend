@@ -2,9 +2,15 @@
 function addProductCart(connection, userId, productId) {
   return new Promise((resolve, reject) => {
     const query = `INSERT INTO user_cart
-                  VALUES('${userId}','${productId}', 1)`;
+                  SET ?`;
 
-    connection.query(query, (err) => {
+    const userProduct = {
+      user_id: userId,
+      product_id: productId,
+      quantity: 1,
+    };
+
+    connection.query(query, userProduct, (err) => {
       if (err) {
         reject(err);
       } else {
@@ -18,9 +24,9 @@ function updateProductCartAdd(connection, userId, productId) {
   return new Promise((resolve, reject) => {
     const query = `UPDATE user_cart
                   set quantity = quantity+1
-                  where user_id = '${userId}' and product_id = '${productId}'`;
+                  where user_id = ? and product_id = ?`;
 
-    connection.query(query, (err) => {
+    connection.query(query, [userId, productId], (err) => {
       if (err) {
         reject(err);
       } else {
@@ -34,9 +40,9 @@ function updateProductCartMinus(connection, userId, productId) {
   return new Promise((resolve, reject) => {
     const query = `UPDATE user_cart
                   set quantity = quantity-1
-                  where user_id = '${userId}' and product_id = '${productId}'`;
+                  where user_id = ? and product_id = ?`;
 
-    connection.query(query, (err) => {
+    connection.query(query, [userId, productId], (err) => {
       if (err) {
         reject(err);
       } else {
@@ -49,9 +55,9 @@ function updateProductCartMinus(connection, userId, productId) {
 function deleteProductCart(connection, userId, productId) {
   return new Promise((resolve, reject) => {
     const query = `DELETE FROM user_cart
-                  where user_id = '${userId}' and product_id = '${productId}'`;
+                  where user_id = ? and product_id = ?`;
 
-    connection.query(query, (err) => {
+    connection.query(query, [userId, productId], (err) => {
       if (err) {
         reject(err);
       } else {

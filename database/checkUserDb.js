@@ -2,9 +2,11 @@
 function checkUser(connection, data) {
   return new Promise((resolve, reject) => {
     const query = `SELECT id,name,active,is_admin from users 
-                  where email='${data.email}' and password='${data.password}'`;
+                  where email=? and password=?`;
 
-    connection.query(query, (err, dbResponse) => {
+    const valuesArray = [data.email, data.password];
+
+    connection.query(query, valuesArray, (err, dbResponse) => {
       if (err) {
         reject(err);
       } else {
