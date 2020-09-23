@@ -8,6 +8,7 @@ const config = require('../config/config.js');
 const { connection } = require('../database/dbConnect.js');
 const addUserDb = require('../database/addUserDb.js');
 const { confirmUser } = require('../database/confirmUser.js');
+const logger = require('../logger.js');
 
 const router = express.Router();
 
@@ -29,6 +30,7 @@ function postAndVerify(req, res, next) {
         jwt.sign(req.body.id, config.secret, (err, token) => {
           url = `http://${req.get('host')}/signup/confirmation/${token}`;
           if (err) {
+            logger.error('User id JWT sign failed!');
             next(err);
           } else {
             transporter.sendMail({
@@ -37,14 +39,17 @@ function postAndVerify(req, res, next) {
               subject: 'Confirm Email Trendy.com',
               html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
             });
+            logger.info('User confirmation successful');
             res.send('user added successfully');
           }
         });
       })
       .catch((err) => {
         if (err.code === 'ER_DUP_ENTRY') {
+          logger.info('User already exists');
           res.status(409).json({ msg: 'User already exists!' });
         } else {
+          logger.error('Adding user to database failed!');
           next(err);
         }
       });
@@ -60,13 +65,16 @@ router.post('/',
 router.get('/confirmation/:token', (req, res) => {
   jwt.verify(req.params.token, config.secret, (err, id) => {
     if (err) {
+      logger.info('User verification failed');
       res.send('Verification failed!!');
     } else {
       confirmUser(connection, id)
         .then(() => {
+          logger.info('User confirmation successful');
           res.send('Thank you for confirming!');
         })
         .catch(() => {
+          logger.error('User confirmation status update in database failed!');
           res.status(500).send('Internal server error');
         });
     }

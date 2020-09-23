@@ -6,6 +6,7 @@ const login = require('./routes/login.js');
 const product = require('./routes/product.js');
 const cart = require('./routes/cart.js');
 const initializeDatabase = require('./database/initializeDatabase');
+const logger = require('./logger.js');
 
 initializeDatabase.createUserTable();
 initializeDatabase.createProductsTable();
@@ -25,17 +26,20 @@ app.use((req, res, next) => {
   const err = new Error('Not Found!');
   err.status = 404;
   next(err);
+  logger.info('User request not able to proceed as route was not found!');
 });
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
+  logger.error('Internal server error!');
   res.status(err.status || 500);
   res.send({
     error: {
-      status: err.status,
       message: err.message,
     },
   });
 });
 
-app.listen(config.port);
+app.listen(config.port, () => {
+  logger.info(`Server started at port ${config.port}`);
+});

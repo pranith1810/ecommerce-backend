@@ -6,6 +6,7 @@ const { connection } = require('../database/dbConnect.js');
 const config = require('../config/config.js');
 const getProductsDb = require('../database/getProductsDb.js');
 const addProductDb = require('../database/addProductDb.js');
+const logger = require('../logger.js');
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.get('/home', (req, res, next) => {
       res.json(data);
     })
     .catch((err) => {
+      logger.error('Home tab products request failed');
       next(err);
     });
 });
@@ -25,6 +27,7 @@ router.get('/clothing', (req, res, next) => {
       res.json(data);
     })
     .catch((err) => {
+      logger.error('Clothing products request failed');
       next(err);
     });
 });
@@ -35,6 +38,7 @@ router.get('/accessories', (req, res, next) => {
       res.json(data);
     })
     .catch((err) => {
+      logger.error('Accessory products request failed');
       next(err);
     });
 });
@@ -45,6 +49,7 @@ router.get('/all', (req, res, next) => {
       res.json(data);
     })
     .catch((err) => {
+      logger.error('All products request failed');
       next(err);
     });
 });
@@ -55,6 +60,7 @@ router.get('/:id', (req, res, next) => {
       res.json(data);
     })
     .catch((err) => {
+      logger.error(`Product with id ${req.params.id} request failed`);
       next(err);
     });
 });
@@ -62,6 +68,7 @@ router.get('/:id', (req, res, next) => {
 function addProduct(req, res, next) {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
+      logger.info('User verification failed');
       res.status(403).send('Verification failed!!');
     } else {
       const errors = validationResult(req);
@@ -73,6 +80,7 @@ function addProduct(req, res, next) {
             res.send('Product added successfully!');
           })
           .catch((error) => {
+            logger.error('Add product request failed');
             next(error);
           });
       }
@@ -86,18 +94,21 @@ router.post('/add',
     if (isTopProduct === 'Yes' || isTopProduct === 'No') {
       return true;
     }
+    logger.info('Product details entered are not valid');
     throw new Error('Invalid top product value!');
   }),
   body('price').custom((price) => {
     if (parseInt(price, 10) > 0) {
       return true;
     }
+    logger.info('Product details entered are not valid');
     throw new Error('Invalid price!');
   }),
   body('productType').custom((productType) => {
     if (productType === 'Clothing' || productType === 'Accessories') {
       return true;
     }
+    logger.info('Product details entered are not valid');
     throw new Error('Invalid type!');
   }),
   addProduct);
@@ -105,6 +116,7 @@ router.post('/add',
 router.delete('/delete', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
+      logger.info('User verification failed');
       res.status(403).send('Verification failed!!');
     } else {
       addProductDb.deleteProduct(connection, req.body.productId)
@@ -112,6 +124,7 @@ router.delete('/delete', (req, res, next) => {
           res.send('Product deleted successfully!');
         })
         .catch((error) => {
+          logger.error('Delete product request failed');
           next(error);
         });
     }
@@ -121,6 +134,7 @@ router.delete('/delete', (req, res, next) => {
 router.put('/update', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
+      logger.info('User verification failed');
       res.status(403).send('Verification failed!!');
     } else {
       addProductDb.deleteProduct(connection, req.body.productId)
@@ -134,6 +148,7 @@ router.put('/update', (req, res, next) => {
             });
         })
         .catch((error) => {
+          logger.error('Update product request failed');
           next(error);
         });
     }
