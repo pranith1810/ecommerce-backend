@@ -93,14 +93,14 @@ router.put('/update/minus', (req, res, next) => {
   });
 });
 
-router.delete('/delete', (req, res, next) => {
-  jwt.verify(req.body.token, config.secret, (err, claims) => {
+router.delete('/delete/:token/:productId', (req, res, next) => {
+  jwt.verify(req.params.token, config.secret, (err, claims) => {
     if (err) {
       logger.info('User verification failed');
       res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       logger.info('User verification successful');
-      addProductCartDb.deleteProductCart(connection, claims.id, req.body.productId)
+      addProductCartDb.deleteProductCart(connection, claims.id, req.params.productId)
         .then(() => {
           logger.info(`User with ${claims.id} deleted product in cart with id ${req.body.productId} successfully`);
           res.json({ msg: 'Product deleted from cart successfully!' }).end();

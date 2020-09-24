@@ -113,13 +113,13 @@ router.post('/add',
   }),
   addProduct);
 
-router.delete('/delete', (req, res, next) => {
-  jwt.verify(req.body.token, config.secret, (err) => {
+router.delete('/delete/:token/:productId', (req, res, next) => {
+  jwt.verify(req.params.token, config.secret, (err) => {
     if (err) {
       logger.info('User verification failed');
       res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
-      addProductDb.deleteProduct(connection, req.body.productId)
+      addProductDb.deleteProduct(connection, req.params.productId)
         .then(() => {
           res.json({ msg: 'Product deleted successfully!' }).end();
         })
