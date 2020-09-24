@@ -13,10 +13,10 @@ const router = express.Router();
 router.get('/home', (req, res, next) => {
   getProductsDb.getTopProducts(connection)
     .then((data) => {
-      res.json(data);
+      res.json(data).end();
     })
     .catch((err) => {
-      logger.error('Home tab products request failed');
+      logger.error(`Home tab products request failed: ${JSON.stringify(err)}`);
       next(err);
     });
 });
@@ -24,10 +24,10 @@ router.get('/home', (req, res, next) => {
 router.get('/clothing', (req, res, next) => {
   getProductsDb.getClothing(connection)
     .then((data) => {
-      res.json(data);
+      res.json(data).end();
     })
     .catch((err) => {
-      logger.error('Clothing products request failed');
+      logger.error(`Clothing products request failed: ${JSON.stringify(err)}`);
       next(err);
     });
 });
@@ -35,10 +35,10 @@ router.get('/clothing', (req, res, next) => {
 router.get('/accessories', (req, res, next) => {
   getProductsDb.getAccessories(connection)
     .then((data) => {
-      res.json(data);
+      res.json(data).end();
     })
     .catch((err) => {
-      logger.error('Accessory products request failed');
+      logger.error(`Accessory products request failed: ${JSON.stringify(err)}`);
       next(err);
     });
 });
@@ -46,10 +46,10 @@ router.get('/accessories', (req, res, next) => {
 router.get('/all', (req, res, next) => {
   getProductsDb.getAllProducts(connection)
     .then((data) => {
-      res.json(data);
+      res.json(data).end();
     })
     .catch((err) => {
-      logger.error('All products request failed');
+      logger.error(`All products request failed: ${JSON.stringify(err)}`);
       next(err);
     });
 });
@@ -57,10 +57,10 @@ router.get('/all', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   getProductsDb.getProduct(connection, req.params.id)
     .then((data) => {
-      res.json(data);
+      res.json(data).end();
     })
     .catch((err) => {
-      logger.error(`Product with id ${req.params.id} request failed`);
+      logger.error(`Product with id ${req.params.id} request failed: ${JSON.stringify(err)}`);
       next(err);
     });
 });
@@ -69,18 +69,18 @@ function addProduct(req, res, next) {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({ errors: errors.array() }).end();
       } else {
         addProductDb.addProduct(connection, uuidv4(), req.body)
           .then(() => {
-            res.send('Product added successfully!');
+            res.json({ msg: 'Product added successfully!' }).end();
           })
           .catch((error) => {
-            logger.error('Add product request failed');
+            logger.error(`Add product request failed: ${JSON.stringify(error)}`);
             next(error);
           });
       }
@@ -109,7 +109,7 @@ router.post('/add',
       return true;
     }
     logger.info('Product details entered are not valid');
-    throw new Error('Invalid type!');
+    throw new Error('Invalid product type!');
   }),
   addProduct);
 
@@ -117,14 +117,14 @@ router.delete('/delete', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       addProductDb.deleteProduct(connection, req.body.productId)
         .then(() => {
-          res.send('Product deleted successfully!');
+          res.json({ msg: 'Product deleted successfully!' }).end();
         })
         .catch((error) => {
-          logger.error('Delete product request failed');
+          logger.error(`Delete product request failed: ${JSON.stringify(err)}`);
           next(error);
         });
     }
@@ -135,20 +135,20 @@ router.put('/update', (req, res, next) => {
   jwt.verify(req.body.token, config.secret, (err) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' });
     } else {
       addProductDb.deleteProduct(connection, req.body.productId)
         .then(() => {
           addProductDb.addProduct(connection, req.body.productId, req.body)
             .then(() => {
-              res.send('Product added successfully!');
+              res.json({ msg: 'Product added successfully!' });
             })
             .catch((error) => {
               next(error);
             });
         })
         .catch((error) => {
-          logger.error('Update product request failed');
+          logger.error(`Update product request failed: ${JSON.stringify(error)}`);
           next(error);
         });
     }

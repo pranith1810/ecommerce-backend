@@ -1,58 +1,73 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const { body, validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-const senderGridTransport = require('nodemailer-sendgrid-transport');
+const bcrypt = require('bcrypt');
 const config = require('../config/config.js');
 const { connection } = require('../database/dbConnect.js');
 const addUserDb = require('../database/addUserDb.js');
 const { confirmUser } = require('../database/confirmUser.js');
 const logger = require('../logger.js');
+const nodeMailer = require('../config/nodeMailer');
 
 const router = express.Router();
 
 function postAndVerify(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    logger.info('User signup details validation failed');
+    res.status(400).json({ errors: errors.array() }).end();
   } else {
-    addUserDb.addUser(connection, uuidv4(), req.body)
-      .then(() => {
-        let url = '';
+    bcrypt.hash(req.body.password, 10, (error, hash) => {
+      if (error) {
+        logger.error(`Generating hash for password failed: ${JSON.stringify(error)}`);
+        next(error);
+      } else {
+        const user = {
+          name: req.body.name,
+          email: req.body.email,
+          password: hash,
+          id: uuidv4(),
+        };
 
-        const transporter = nodemailer.createTransport(senderGridTransport({
-          auth: {
-            api_key: config.sendgridApiKey,
-          },
-        }));
+        addUserDb.addUser(connection, user)
+          .then(() => {
+            let url = '';
 
-        jwt.sign(req.body.id, config.secret, (err, token) => {
-          url = `http://${req.get('host')}/signup/confirmation/${token}`;
-          if (err) {
-            logger.error('User id JWT sign failed!');
-            next(err);
-          } else {
-            transporter.sendMail({
-              to: req.body.email,
-              from: 'n.rao@mountblue.tech',
-              subject: 'Confirm Email Trendy.com',
-              html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+            jwt.sign(user.id, config.secret, (err, token) => {
+              url = `http://${req.get('host')}/signup/confirmation/${token}`;
+              if (err) {
+                logger.error('User id JWT sign failed!');
+                next(err);
+              } else {
+                nodeMailer.sendMail({
+                  to: user.email,
+                  from: config.sendgridFromEmail,
+                  subject: 'Confirm Email Trendy.com',
+                  html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+                })
+                  .then(() => {
+                    logger.info('sending email for confirmation successful');
+                  })
+                  .catch((addUserError) => {
+                    logger.error(`Error sending confirmation mail!: ${JSON.stringify(addUserError)}`);
+                    next(error);
+                  });
+                res.json({ msg: 'user added successfully' }).end();
+              }
             });
-            logger.info('User confirmation successful');
-            res.send('user added successfully');
-          }
-        });
-      })
-      .catch((err) => {
-        if (err.code === 'ER_DUP_ENTRY') {
-          logger.info('User already exists');
-          res.status(409).json({ msg: 'User already exists!' });
-        } else {
-          logger.error('Adding user to database failed!');
-          next(err);
-        }
-      });
+          })
+          .catch((err) => {
+            if (err.code === 'ER_DUP_ENTRY') {
+              logger.info('User already exists');
+              res.status(409).json({ msg: 'User already exists!' }).end();
+            } else {
+              logger.error(`Adding user to database failed!: ${JSON.stringify(err)}`);
+              next(err);
+            }
+          });
+      }
+    });
   }
 }
 
@@ -62,20 +77,20 @@ router.post('/',
   body('password').isLength({ min: 8 }),
   postAndVerify);
 
-router.get('/confirmation/:token', (req, res) => {
+router.get('/confirmation/:token', (req, res, next) => {
   jwt.verify(req.params.token, config.secret, (err, id) => {
     if (err) {
       logger.info('User verification failed');
-      res.send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       confirmUser(connection, id)
         .then(() => {
           logger.info('User confirmation successful');
-          res.send('Thank you for confirming!');
+          res.send('Thank you for confirming!').end();
         })
-        .catch(() => {
-          logger.error('User confirmation status update in database failed!');
-          res.status(500).send('Internal server error');
+        .catch((error) => {
+          logger.error(`User confirmation status update in database failed!: ${JSON.stringify(error)}`);
+          next(error);
         });
     }
   });

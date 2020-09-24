@@ -17,6 +17,13 @@ const logger = createLogger({
       level: 'error',
       format: format.combine(format.timestamp(), format.simple()),
     }),
+    new transports.Console({
+      level: 'info',
+      format: format.combine(
+        format.colorize(),
+        format.simple(),
+      ),
+    }),
   ],
 });
 

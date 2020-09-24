@@ -10,4 +10,5 @@ module.exports = {
   port: process.env.PORT || '8000',
   secret: process.env.SECRET_KEY,
   sendgridApiKey: process.env.SENDGRID_API_KEY,
+  sendgridFromEmail: process.env.SENDGRID_FROM_EMAIL,
 };

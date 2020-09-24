@@ -9,23 +9,23 @@ const logger = require('../logger.js');
 const router = express.Router();
 
 router.post('/add', (req, res, next) => {
-  jwt.verify(req.body.token, config.secret, (err, id) => {
+  jwt.verify(req.body.token, config.secret, (err, claims) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       logger.info('User verification successful');
-      addProductCartDb.addProductCart(connection, id, req.body.productId)
+      addProductCartDb.addProductCart(connection, claims.id, req.body.productId)
         .then(() => {
-          logger.info(`User with ${id} added product to cart with id ${req.body.productId} successfully`);
-          res.send('Product added to cart successfully!');
+          logger.info(`User with ${claims.id} added product to cart with id ${req.body.productId} successfully`);
+          res.json({ msg: 'Product added to cart successfully!' }).end();
         })
         .catch((error) => {
           if (error.code === 'ER_DUP_ENTRY') {
-            logger.info(`User with ${id} added product to cart with id ${req.body.productId} failed as the product exists!`);
-            res.status(409).json({ msg: 'Product already in cart!' });
+            logger.info(`User with ${claims.id} added product to cart with id ${req.body.productId} failed as the product exists!`);
+            res.status(409).json({ msg: 'Product already in cart!' }).end();
           } else {
-            logger.error(`User with ${id} was not able to add product to cart!`);
+            logger.error(`User with ${claims.id} was not able to add product to cart!: ${JSON.stringify(error)}`);
             next(error);
           }
         });
@@ -34,19 +34,19 @@ router.post('/add', (req, res, next) => {
 });
 
 router.get('/all/:token', (req, res, next) => {
-  jwt.verify(req.params.token, config.secret, (err, id) => {
+  jwt.verify(req.params.token, config.secret, (err, claims) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       logger.info('User verification successful');
-      getAllProductCartDb.getAllProductCart(connection, id)
+      getAllProductCartDb.getAllProductCart(connection, claims.id)
         .then((dbResponse) => {
-          logger.info(`User with ${id} gets all cart products successfully!`);
-          res.send(dbResponse);
+          logger.info(`User with ${claims.id} gets all cart products successfully!`);
+          res.json(dbResponse).end();
         })
         .catch((error) => {
-          logger.error(`User with ${id} was not able to get all products from cart!`);
+          logger.error(`User with ${claims.id} was not able to get all products from cart!: ${JSON.stringify(error)}`);
           next(error);
         });
     }
@@ -54,19 +54,19 @@ router.get('/all/:token', (req, res, next) => {
 });
 
 router.put('/update/add', (req, res, next) => {
-  jwt.verify(req.body.token, config.secret, (err, id) => {
+  jwt.verify(req.body.token, config.secret, (err, claims) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       logger.info('User verification successful');
-      addProductCartDb.updateProductCartAdd(connection, id, req.body.productId)
+      addProductCartDb.updateProductCartAdd(connection, claims.id, req.body.productId)
         .then(() => {
-          logger.info(`User with ${id} updated product quantity with id ${req.body.productId} successfully`);
-          res.send('Product quantity increased successfully!');
+          logger.info(`User with ${claims.id} updated product quantity with id ${req.body.productId} successfully`);
+          res.json({ msg: 'Product quantity increased successfully!' }).end();
         })
         .catch((error) => {
-          logger.error(`User with ${id} was not able to update product quantity in cart!`);
+          logger.error(`User with ${claims.id} was not able to update product quantity in cart!: ${JSON.stringify(error)}`);
           next(error);
         });
     }
@@ -74,19 +74,19 @@ router.put('/update/add', (req, res, next) => {
 });
 
 router.put('/update/minus', (req, res, next) => {
-  jwt.verify(req.body.token, config.secret, (err, id) => {
+  jwt.verify(req.body.token, config.secret, (err, claims) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       logger.info('User verification successful');
-      addProductCartDb.updateProductCartMinus(connection, id, req.body.productId)
+      addProductCartDb.updateProductCartMinus(connection, claims.id, req.body.productId)
         .then(() => {
-          logger.info(`User with ${id} updated product quantity with id ${req.body.productId} successfully`);
-          res.send('Product quantity increased successfully!');
+          logger.info(`User with ${claims.id} updated product quantity with id ${req.body.productId} successfully`);
+          res.json({ msg: 'Product quantity increased successfully!' }).end();
         })
         .catch((error) => {
-          logger.error(`User with ${id} was not able to update product quantity in cart!`);
+          logger.error(`User with ${claims.id} was not able to update product quantity in cart!: ${JSON.stringify(error)}`);
           next(error);
         });
     }
@@ -94,19 +94,19 @@ router.put('/update/minus', (req, res, next) => {
 });
 
 router.delete('/delete', (req, res, next) => {
-  jwt.verify(req.body.token, config.secret, (err, id) => {
+  jwt.verify(req.body.token, config.secret, (err, claims) => {
     if (err) {
       logger.info('User verification failed');
-      res.status(403).send('Verification failed!!');
+      res.status(403).json({ msg: 'Verification failed!!' }).end();
     } else {
       logger.info('User verification successful');
-      addProductCartDb.deleteProductCart(connection, id, req.body.productId)
+      addProductCartDb.deleteProductCart(connection, claims.id, req.body.productId)
         .then(() => {
-          logger.info(`User with ${id} deleted product in cart with id ${req.body.productId} successfully`);
-          res.send('Product deleted from cart successfully!');
+          logger.info(`User with ${claims.id} deleted product in cart with id ${req.body.productId} successfully`);
+          res.json({ msg: 'Product deleted from cart successfully!' }).end();
         })
         .catch((error) => {
-          logger.error(`User with ${id} was not able to delete product in cart!`);
+          logger.error(`User with ${claims} was not able to delete product in cart!: ${JSON.stringify(error)}`);
           next(error);
         });
     }
